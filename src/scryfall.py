@@ -1,6 +1,8 @@
 import requests as re
 import wget
 import json
+import pandas as pd
+import streamlit as st
 
 class ScryfallHandler:
 
@@ -29,16 +31,31 @@ class ScryfallHandler:
             print("Falha ao obter os dados", response.status_code)
             print("Resposta:", response.text)
 
-    def download_all_commander_cards(self):
+    def commander_cards(self, option = 'data_frame'):
+        '''
+            options: data_frame | download
+        '''
+
         response = re.get(f'{self.__base_url}/cards/search?q=st:commander')
         if response.status_code == 200:
             response = response.json()
             cards = response['data']
+            total_cards = response['total_cards']
+            progress = 0
+            my_bar = st.progress(0, text="Buscando os dados. Por favor Aguarde")
             while response['has_more']:
                 response = re.get(response['next_page']).json()
                 cards.extend(response['data'])
-            with open(f'{self.__base_data_path}/commader.json', 'w') as f:
-                json.dump(cards, f)
+                status = len(cards)
+                progress = status / total_cards
+                my_bar.progress(progress, text=f"Buscando os dados. Por favor Aguarde. Status: {progress*100:.2f}%")
+            my_bar.empty()
+            if option == 'data_frame':
+                return pd.json_normalize(cards)
+
+            if option == 'download':
+                with open(f'{self.__base_data_path}/commader.json', 'w') as f:
+                    json.dump(cards, f)
         else:
             print("Falha ao obter os dados", response.status_code)
             print("Resposta:", response.text)
