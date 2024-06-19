@@ -14,3 +14,18 @@ def vis_commander_by_released_date(df_commander_cards):
                     xaxis_title='Ano',
                     yaxis_title='Quantidade')
     return fig
+
+def vis_cmd_distribuition():
+    pass
+
+def vis_word_cloud():
+    pass
+
+def vis_edhrec_rank():
+    pass
+
+def vis_sinergy_graph():
+    pass
+
+def vis_histogram():
+    pass

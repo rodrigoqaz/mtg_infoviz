@@ -75,3 +75,20 @@ with tab3:
    
 
  
+# TODO:
+
+# Introdução e Explicação do Magic - Dani
+# Buscar referências sobre sinergia e EDHREC  - Dani
+
+# Visão Geral - Allana
+
+# - Distribuição do CMC, cores e tipos
+# - Nuvem de Palavras - Colocar Dropdown para selecionar
+# - Ranking do EDHREC
+
+# Análise - Rodrigo
+
+# - Input do Deck - Escreve o comandante e depois sobe o arquivo
+# - Grafo de Sinergia
+# - Nuvem de palavras
+# - Cores e tipos
