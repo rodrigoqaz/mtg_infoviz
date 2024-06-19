@@ -5,8 +5,13 @@ from src.visualizations import vis_commander_by_released_date
 
 
 scryfall_handler = ScryfallHandler()
-df_commander_cards = scryfall_handler.commander_cards()
 
+@st.cache_data(experimental_allow_widgets = True, show_spinner = False)
+def get_data():
+    return scryfall_handler.commander_cards()
+
+
+df_commander_cards = get_data()
 st.header("Visão Commander")
 st.dataframe(df_commander_cards.head(10))
 st.plotly_chart(
