@@ -1,0 +1,73 @@
+import requests
+import pandas as pd
+import matplotlib.pyplot as plt
+from wordcloud import WordCloud
+
+# Buscar dados da API do Scryfall
+url = "https://api.scryfall.com/cards/search"
+query = "q=is:commander+format:commander"
+response = requests.get(f"{url}?{query}")
+
+# Verificar se a requisição foi bem-sucedida
+if response.status_code == 200:
+    data = response.json()
+    cards = data['data']
+else:
+    cards = []
+
+# Convertendo para DataFrame
+df = pd.DataFrame(cards)
+
+# Selecionar colunas relevantes
+columns = ['name', 'mana_cost', 'cmc', 'type_line', 'colors', 'power', 'toughness', 'oracle_text', 'set_name']
+df = df[columns]
+
+# Expandir a coluna de cores para múltiplas colunas
+df = df.explode('colors')
+
+# Função para determinar a quantidade de cores
+def count_colors(colors):
+    if isinstance(colors, list):
+        return len(colors)
+    return 0
+
+# Adicionar coluna de quantidade de cores
+df['num_colors'] = df['colors'].apply(lambda x: count_colors(x))
+
+# Filtrando apenas criaturas lendárias e parceiros
+df = df[df['type_line'].str.contains('Legendary') | df['oracle_text'].str.contains('Partner')]
+
+# Gráfico de Barras para Distribuição de Cores
+color_counts = df['colors'].value_counts()
+plt.figure(figsize=(10, 6))
+color_counts.plot(kind='bar')
+plt.title('Distribuição de Cores dos Comandantes')
+plt.xlabel('Cor')
+plt.ylabel('Quantidade')
+plt.show()
+
+# Histograma para Distribuição de CMC
+plt.figure(figsize=(10, 6))
+df['cmc'].plot(kind='hist', bins=20)
+plt.title('Distribuição de Custo de Mana Convertido (CMC) dos Comandantes')
+plt.xlabel('CMC')
+plt.ylabel('Quantidade')
+plt.show()
+
+# Gráfico de Barras para Tipos de Criatura
+df['main_type'] = df['type_line'].apply(lambda x: x.split('—')[0].strip())
+type_counts = df['main_type'].value_counts()
+plt.figure(figsize=(10, 6))
+type_counts.plot(kind='bar')
+plt.title('Distribuição de Tipos de Criatura dos Comandantes')
+plt.xlabel('Tipo de Criatura')
+plt.ylabel('Quantidade')
+plt.show()
+
+# Nuvem de Palavras para Habilidades
+all_text = ' '.join(df['oracle_text'].dropna())
+wordcloud = WordCloud(width=800, height=400, background_color='white').generate(all_text)
+plt.figure(figsize=(10, 5))
+plt.imshow(wordcloud, interpolation='bilinear')
+plt.axis('off')
+plt.show()
