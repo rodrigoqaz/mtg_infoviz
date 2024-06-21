@@ -13,13 +13,6 @@ css='''
 [data-testid="stFileUploaderDropzone"] button::after {visibility: visible; content:"Selecionar Arquivo";}
 </style>
 '''
-scryfall_handler = ScryfallHandler()
-@st.cache_data(experimental_allow_widgets = True, show_spinner = False)
-def get_data():
-    return scryfall_handler.commander_cards()
-
-df_commander_cards = get_data()
-
 
 st.header("Insira seu Deck")
 st.selectbox("Commander:", options=['A', 'B'])
