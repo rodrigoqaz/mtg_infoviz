@@ -35,7 +35,7 @@ class ScryfallHandler:
             options: data_frame | download
         '''
 
-        response = re.get(f'{self.__base_url}/cards/search?q=st:commander')
+        response = re.get(f'{self.__base_url}/cards/search?q=is:commander')
         if response.status_code == 200:
             response = response.json()
             cards = response['data']
