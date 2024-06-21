@@ -10,7 +10,7 @@ def add_logo():
     st.set_page_config(
         page_title="MTG - Uma análise sobre seu Deck",
         page_icon="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/160/microsoft/106/mage_1f9d9.png"
-)
+    )
     st.markdown(
         """
         <style>
