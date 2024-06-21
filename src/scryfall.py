@@ -11,7 +11,6 @@ class ScryfallHandler:
         self.__base_data_path = 'data'
 
     def download_bulk_data(self, database = 'All'):
-        
         options = [
             'Oracle',
             'UniqueArtwork',
@@ -19,12 +18,12 @@ class ScryfallHandler:
             'All',
             'Rulings'
         ]
-        
+
         response = re.get(f'{self.__base_url}/bulk-data')
         if response.status_code == 200:
             data = response.json()
             wget.download(
-                data['data'][options.index(database)]['download_uri'], 
+                data['data'][options.index(database)]['download_uri'],
                 f'{self.__base_data_path}/{database}.json'
             )
         else:
@@ -48,7 +47,8 @@ class ScryfallHandler:
                 cards.extend(response['data'])
                 status = len(cards)
                 progress = status / total_cards
-                my_bar.progress(progress, text=f"Buscando os dados. Por favor Aguarde. Status: {progress*100:.2f}%")
+                my_bar.progress(progress,
+                                text=f"Buscando os dados. Por favor Aguarde. Status: {progress*100:.2f}%")
             my_bar.empty()
             if option == 'data_frame':
                 return pd.json_normalize(cards)
