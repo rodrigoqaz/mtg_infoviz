@@ -126,7 +126,7 @@ with tab3:
         st.html('<div style="text-align: center; font-size: 30px"> Danielle Silveira </div>')
         st.image("https://github.com/danifowl.png")
         st.write("""
-                 - Capacity Planning Analyst e jogadora de Magic the Gathering
+                 - Capacity Planning Analyst
                  - Mestrando do Mecai
                  - Atribuições:
                     - Uso da API do Scryfall e filtros
