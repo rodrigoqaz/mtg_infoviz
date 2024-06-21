@@ -43,7 +43,6 @@ with tab1:
             - **Análise de Edições e Reimpressões:** Fornecer estatísticas sobre as edições das cartas no deck.
             - **Informações Curiosas:** Oferecer dados sobre expansões, raridade e valor das cartas.
 
-            Essa abordagem ajudará jogadores a otimizar seus decks e enriquecerá a experiência de jogo, tornando a análise de decks divertida e educativa.
             """)
 
 with tab2:
@@ -101,8 +100,6 @@ with tab2:
             - Focar em estabelecer uma presença no campo de batalha enquanto se defende contra ameaças dos oponentes.
             - Prestar atenção às jogadas e estratégias dos oponentes para antecipar e responder a ameaças.
             - Utilizar a política e diplomacia, especialmente em jogos com múltiplos jogadores, para criar alianças temporárias e evitar ser o alvo principal.
-
-            Commander é um formato que valoriza a criatividade e a interação social, oferecendo uma experiência rica e variada que pode ser apreciada tanto por novos jogadores quanto por veteranos. Com uma infinidade de cartas e combinações possíveis, cada jogo de Commander é uma aventura única.
 
             **Fontes:**
             - [Magic: The Gathering - Commander Rules](https://magic.wizards.com/en/formats/commander)
