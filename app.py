@@ -129,7 +129,7 @@ with tab3:
                  - Capacity Planning Analyst
                  - Mestrando do Mecai
                  - Atribuições:
-                    - Uso da API do Scryfall e filtros
+                    - Bases de informações
                     - Dashboards
                     - Play tester
                  """)   
