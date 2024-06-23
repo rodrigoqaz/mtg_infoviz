@@ -2,8 +2,12 @@ import streamlit as st
 import pandas as pd
 from src.scryfall import ScryfallHandler
 from src.visualizations import vis_commander_by_released_date
-from src.visualizations import vis_cmd_distribuition
+from src.visualizations import vis_distribuition
 from src.visualizations import vis_word_cloud
+from src.visualizations import vis_colors_rank
+from src.visualizations import vis_type_line
+from src.visualizations import vis_rarity
+from src.visualizations import vis_edhrec_rank
 from src.visualizations import add_logo
 
 
@@ -17,15 +21,25 @@ def get_data():
 
 
 df_commander_cards = get_data()
+
 st.header("Visão Commander")
 # st.dataframe(df_commander_cards.head(10))
 
 st.plotly_chart(
     vis_commander_by_released_date(df_commander_cards),
     use_container_width=True)
-st.plotly_chart(vis_cmd_distribuition(df_commander_cards))
 
+st.plotly_chart(vis_distribuition(df_commander_cards))
 
+fig_count, fig_avg_cmc = vis_type_line(df_commander_cards)
+st.plotly_chart(fig_count)
+st.plotly_chart(fig_avg_cmc)
+
+fig_count, fig_avg_cmc = vis_rarity(df_commander_cards)
+st.plotly_chart(fig_count)
+st.plotly_chart(fig_avg_cmc)
+
+st.plotly_chart(vis_colors_rank(df_commander_cards))
 
 st.header("Nuvem de Palavras")
 input_type = st.selectbox("Escolha nuvem de palavras que gostaria de exibir:",
@@ -52,3 +66,7 @@ else:
     if st.button("Exibir nuvem de palavras"):
         image_buffer = vis_word_cloud(df_commander_cards, 'Carta Texto', None)
         st.image(image_buffer, use_column_width=True)
+
+st.header("Ranking EDHREC")
+image_buffer = vis_edhrec_rank(df_commander_cards)
+st.image(image_buffer, use_column_width=True)
