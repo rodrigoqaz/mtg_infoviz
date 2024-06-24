@@ -34,8 +34,11 @@ class ScryfallHandler:
         '''
             options: data_frame | download
         '''
-
-        response = re.get(f'{self.__base_url}/cards/search?q=is:commander')
+        query = (
+            "is:legendary (type:creature OR (type:planeswalker "
+            "AND oracle_text:'This card can be your commander'))"
+        )
+        response = re.get(f'{self.__base_url}/cards/search?q={query}')
         if response.status_code == 200:
             response = response.json()
             cards = response['data']
