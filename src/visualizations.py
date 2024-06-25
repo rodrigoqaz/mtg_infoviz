@@ -49,7 +49,7 @@ def vis_commander_by_released_date(df_commander_cards):
                             y=commander_by_released_date.values,
                             mode='lines+markers',
                             name='lines+markers'))
-    fig.update_layout(title='Quantidade de cartas lançadas por ano',
+    fig.update_layout(title='Quantidade de Commandantes lançados por ano',
                     xaxis_title='Ano',
                     yaxis_title='Quantidade')
     return fig
@@ -128,23 +128,33 @@ def vis_colors_rank(df):
                  color=color_distribution.index,
                  text=color_distribution.values,
                  labels={'x': 'CORES', 'y': 'Total'},
-                 title='<b>Número de vezes em que cada cor aparece')
+                 title='<b>Predominâncias das Identidades dos Commandantes')
 
     fig.update_layout(showlegend=False)
     fig.update_yaxes(tickformat="000")
 
     return fig
 
+def split_types(type_line):
+    if pd.isna(type_line):
+        return []
+    parts = type_line.split('—')
+    if len(parts) > 1:
+        subtypes = parts[1].split('//')
+        return [subtype.strip() for subtype in subtypes]
+    return []
 
 def vis_type_line(df):
-
-    df['main_type'] = df['type_line'].apply(lambda x: x.split('—')[0].strip())
-    rank_type_line = df['main_type'].value_counts().sort_values(
-        ascending=False)
+    df['main_type'] = df['type_line'].apply(split_types)
+    df_exploded = df.explode('subtypes')
+    rank_type_line = df_exploded['subtypes'].value_counts().sort_values(ascending=False)
     top_type_line = rank_type_line.head(10)
-
-    df_filtered_type_line = df[df['main_type'].isin(top_type_line.index)]
-
+    # df['main_type'] = df['type_line'].apply(lambda x: x.split('—')[0].strip())
+    # rank_type_line = df['main_type'].value_counts().sort_values(
+    #     ascending=False)
+    # top_type_line = rank_type_line.head(10)
+    # df_filtered_type_line = df[df['main_type'].isin(top_type_line.index)]
+    df_filtered_type_line = df_exploded[df_exploded['subtypes'].isin(top_type_line.index)]
     grouped_data = df_filtered_type_line.groupby('main_type')[
         'cmc'].agg(['mean', 'count']).reset_index()
 

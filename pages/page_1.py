@@ -19,8 +19,13 @@ add_logo()
 def get_data():
     return scryfall_handler.commander_cards()
 
+def get_data_full():
+    return scryfall_handler.commander_cards()
 
 df_commander_cards = get_data()
+df_base_full=get_data_full()
+
+
 
 st.header("Visão Commander")
 # st.dataframe(df_commander_cards.head(10))
@@ -68,5 +73,5 @@ else:
         st.image(image_buffer, use_column_width=True)
 
 st.header("Ranking EDHREC")
-image_buffer = vis_edhrec_rank(df_commander_cards)
+image_buffer = vis_edhrec_rank(df_base_full)
 st.image(image_buffer, use_column_width=True)
