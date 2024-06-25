@@ -7,7 +7,7 @@ from src.visualizations import vis_word_cloud
 from src.visualizations import vis_colors_rank
 from src.visualizations import vis_type_line
 from src.visualizations import vis_rarity
-from src.visualizations import vis_edhrec_rank
+# from src.visualizations import vis_edhrec_rank
 from src.visualizations import add_logo
 
 
