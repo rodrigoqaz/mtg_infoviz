@@ -146,40 +146,38 @@ def split_types(type_line):
     return []
 
 def vis_type_line(df):
-    df['main_type'] = df['type_line'].apply(split_types)
+    # Aplica a função split_types para processar os subtipos
+    df['subtypes'] = df['type_line'].apply(split_types)
+    
+    # Explode os subtipos em linhas separadas para cada subtipo
     df_exploded = df.explode('subtypes')
-    rank_type_line = df_exploded['subtypes'].value_counts().sort_values(ascending=False)
-    top_type_line = rank_type_line.head(10)
-    # df['main_type'] = df['type_line'].apply(lambda x: x.split('—')[0].strip())
-    # rank_type_line = df['main_type'].value_counts().sort_values(
-    #     ascending=False)
-    # top_type_line = rank_type_line.head(10)
-    # df_filtered_type_line = df[df['main_type'].isin(top_type_line.index)]
-    df_filtered_type_line = df_exploded[df_exploded['subtypes'].isin(top_type_line.index)]
-    grouped_data = df_filtered_type_line.groupby('main_type')[
-        'cmc'].agg(['mean', 'count']).reset_index()
 
-    grouped_data.columns = ['main_type', 'cmc', 'TYPE_COUNT']
+    # Calcula a contagem dos subtipos
+    rank_subtype = df_exploded['subtypes'].value_counts().sort_values(ascending=False)
+    top_subtype = rank_subtype.head(10)
+
+    # Filtra apenas os subtipos mais frequentes para análise
+    df_filtered_subtype = df_exploded[df_exploded['subtypes'].isin(top_subtype.index)]
+
+    # Agrupa por subtipo e calcula a média e a contagem do CMC
+    grouped_data = df_filtered_subtype.groupby('subtypes')['cmc'].agg(['mean', 'count']).reset_index()
+    grouped_data.columns = ['subtypes', 'cmc', 'TYPE_COUNT']
     mean_cmc = grouped_data.sort_values(by='cmc', ascending=False)
-
     mean_cmc['cmc'] = round(mean_cmc['cmc'], 2)
 
-    fig1 = px.bar(top_type_line, x=top_type_line.index, y=top_type_line.values,
-                  color=top_type_line.index, text=top_type_line.values,
-                  labels={'main_type': 'Tipos de Criaturas dos Comandantes',
-                          'y': 'Total'},
-             template='seaborn',
-             title='<b> Criaturas mais frequentes')
+    # Cria os gráficos
+    fig1 = px.bar(top_subtype, x=top_subtype.index, y=top_subtype.values,
+                  color=top_subtype.index, text=top_subtype.values,
+                  labels={'subtypes': 'Subtipos Mais Frequentes', 'y': 'Total'},
+                  template='seaborn', title='<b>Subtipos Mais Frequentes')
     fig1.update_layout(showlegend=False)
     fig1.update_yaxes(tickformat="000")
 
-    fig2 = px.bar(mean_cmc, x='main_type', y='cmc',
-                color='main_type',
-                labels={'main_type': 'Tipos de Criaturas dos Comandantes',
-                        'cmc': 'CMC MÉDIO'},
-                text='TYPE_COUNT',
-                template='seaborn',
-                title='<b> CMC Médio por Tipo de Criatura')
+    fig2 = px.bar(mean_cmc, x='subtypes', y='cmc',
+                  color='subtypes',
+                  labels={'subtypes': 'Subtipos de Criaturas', 'cmc': 'CMC Médio'},
+                  text='TYPE_COUNT',
+                  template='seaborn', title='<b>CMC Médio por Subtipo de Criatura')
     fig2.update_layout(showlegend=False)
     fig2.update_yaxes(tickformat="000")
     fig2.update_traces(textfont_size=8)
