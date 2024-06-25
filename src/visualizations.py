@@ -221,34 +221,34 @@ def vis_rarity(df):
     return fig1, fig2
 
 
-def vis_edhrec_rank(df):
+# def vis_edhrec_rank(df):
 
-    df = df[df['edhrec_rank'].notnull()]
-    df = df.sort_values('edhrec_rank').head(10)
+#     df = df[df['edhrec_rank'].notnull()]
+#     df = df.sort_values('edhrec_rank').head(10)
 
-    fig, axes = plt.subplots(2, 5, figsize=(20, 8))
-    axes = axes.flatten()
+#     fig, axes = plt.subplots(2, 5, figsize=(20, 8))
+#     axes = axes.flatten()
 
-    for i, (index, row) in enumerate(df.iterrows()):
-        img_url = row['image_uris.normal']
-        if img_url:
-            response = requests.get(img_url)
-            img = Image.open(io.BytesIO(response.content))
-            axes[i].imshow(img)
-            axes[i].axis('off')
-            axes[i].set_title(f"{row['name']} (Rank: {row['edhrec_rank']})", fontsize=12)
-        else:
-            axes[i].axis('off')
-            axes[i].set_title(f"{row['name']} (Rank: {row['edhrec_rank']})\nImagem não disponível", fontsize=12)
+#     for i, (index, row) in enumerate(df.iterrows()):
+#         img_url = row['image_uris.normal']
+#         if img_url:
+#             response = requests.get(img_url)
+#             img = Image.open(io.BytesIO(response.content))
+#             axes[i].imshow(img)
+#             axes[i].axis('off')
+#             axes[i].set_title(f"{row['name']} (Rank: {row['edhrec_rank']})", fontsize=12)
+#         else:
+#             axes[i].axis('off')
+#             axes[i].set_title(f"{row['name']} (Rank: {row['edhrec_rank']})\nImagem não disponível", fontsize=12)
 
-    plt.tight_layout()
+#     plt.tight_layout()
 
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png')
-    buf.seek(0)
+#     buf = io.BytesIO()
+#     plt.savefig(buf, format='png')
+#     buf.seek(0)
 
-    # Buffer de memória contendo a imagem
-    return buf
+#     # Buffer de memória contendo a imagem
+#     return buf
 
 
 def vis_sinergy_graph():

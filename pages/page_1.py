@@ -19,11 +19,12 @@ add_logo()
 def get_data():
     return scryfall_handler.commander_cards()
 
-def get_data_full():
-    return scryfall_handler.commander_cards()
+# def get_data_full():
+#     return scryfall_handler.commander_cards()
 
 df_commander_cards = get_data()
-df_base_full=get_data_full()
+
+# df_base_full=get_data_full()
 
 
 
@@ -72,6 +73,6 @@ else:
         image_buffer = vis_word_cloud(df_commander_cards, 'Carta Texto', None)
         st.image(image_buffer, use_column_width=True)
 
-st.header("Ranking EDHREC")
-image_buffer = vis_edhrec_rank(df_base_full)
-st.image(image_buffer, use_column_width=True)
+# st.header("Ranking EDHREC")
+# image_buffer = vis_edhrec_rank(df_base_full)
+# st.image(image_buffer, use_column_width=True)
