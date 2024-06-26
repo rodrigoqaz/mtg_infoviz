@@ -36,7 +36,7 @@ class ScryfallHandler:
         '''
         query = (
             "is:legendary (type:creature OR (type:planeswalker "
-            "AND oracle_text:'This card can be your commander'))"
+            "AND oracle_text:'This card can be your commander' and legal:commander ))"
         )
         response = re.get(f'{self.__base_url}/cards/search?q={query}')
         if response.status_code == 200:
