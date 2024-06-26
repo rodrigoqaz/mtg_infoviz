@@ -34,12 +34,17 @@ class ScryfallHandler:
         '''
             options: data_frame | download
         '''
+        
         query = (
-        'q': '((type:legendary type:creature) OR (type:planeswalker oracle:"this card can be your commander")) AND legal:commander',
-        'order': 'name',  # Ordenar os resultados pelo nome
-        'unique': 'cards'  # Filtrar por cartas únicas
+            '((type:legendary type:creature) OR (type:planeswalker oracle:"this card can be your commander")) AND legal:commander'
         )
-        response = re.get(f'{self.__base_url}/cards/search?q={query}')
+        params = {
+            'q': query,
+            'order': 'name',
+            'unique': 'cards'
+        }
+        # response = re.get(f'{self.__base_url}/cards/search?q={query}')
+        response = re.get(f'{self.__base_url}/cards/search', params=params)
         if response.status_code == 200:
             response = response.json()
             cards = response['data']
