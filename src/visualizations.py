@@ -252,7 +252,7 @@ def vis_rarity(df):
 #     return buf
 
 
-def vis_sinergy_graph():
+def vis_sinergy_graph(cards_sinergy, commander):
 
     def get_card_image_url(card_name):
         response = requests.get(f"https://api.scryfall.com/cards/named?exact={card_name}")
