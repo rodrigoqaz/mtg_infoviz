@@ -13,7 +13,8 @@ import matplotlib.pyplot as plt
 def add_logo():
     st.set_page_config(
         page_title="MTG - Uma análise sobre seu Deck",
-        page_icon="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/160/microsoft/106/mage_1f9d9.png"
+        page_icon="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/160/microsoft/106/mage_1f9d9.png",
+        layout="wide"
     )
     st.markdown(
         """
@@ -252,7 +253,57 @@ def vis_rarity(df):
 
 
 def vis_sinergy_graph():
-    pass
+
+    def get_card_image_url(card_name):
+        response = requests.get(f"https://api.scryfall.com/cards/named?exact={card_name}")
+        if response.status_code == 200:
+            card_data = response.json()
+            if 'image_uris' in card_data:
+                return card_data['image_uris']['normal']
+            else:
+                return card_data['card_faces'][0]['image_uris']['normal'] if 'card_faces' in card_data else ""
+        else:
+            print(f"Erro ao obter imagem da carta {card_name}")
+            return ""
+
+    # Adiciona URLs de imagens às cartas com sinergia
+    sinergies = []
+    for card in cards_sinergy:
+        card['image_url'] = get_card_image_url(card['name'])
+        sinergies.append(card['synergy'])
+    max_sinergy = max(sinergies)
+    min_sinergy = min(sinergies)
+
+    def normalize_sinergy(value, max=max_sinergy, min=min_sinergy):
+        return ((value - min) / (max - min)) * (50-20)+20
+    
+    graph = nx.Graph()
+    commander_image = get_card_image_url(commander)
+    graph.add_node(commander, label=commander, color='red', size=60, image=commander_image, 
+                   shape='image', physics=False, x=0, y=0)
+    
+    angle_step = 2 * math.pi / len(cards_sinergy)  
+    angle = 0
+
+    for card in cards_sinergy:
+        x = (1 - card['synergy'])*600 * math.cos(angle)
+        y = (1 - card['synergy'])*600 * math.sin(angle)
+        graph.add_node(
+            card['name'], 
+            label=f"{card['name']} \n(synergy: {card['synergy']})", 
+            size=normalize_sinergy(card['synergy']), 
+            image=card['image_url'], 
+            shape='image', 
+            physics = False, 
+            x=x, 
+            y=y)
+        graph.add_edge(commander, card['name'], weight=1)
+        angle += angle_step
+
+    net = Network(notebook=True, height="750px")
+
+    net.from_nx(graph)
+    net.show('synergy.html')
 
 def vis_histogram():
     pass

@@ -1,0 +1,155 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 750px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "red", "id": "Ayara, First of Locthwain", "image": "https://cards.scryfall.io/normal/front/e/d/ed0ace28-9a33-4f0d-b8c8-f5517f20ccf1.jpg?1572490057", "label": "Ayara, First of Locthwain", "physics": false, "shape": "image", "size": 60, "x": 0, "y": 0}, {"color": "#97c2fc", "id": "Witch\u0027s Cottage", "image": "https://cards.scryfall.io/normal/front/b/8/b87891cd-b457-4dff-8d18-a7eaf6748fc6.jpg?1572491253", "label": "Witch\u0027s Cottage \n(synergy: 0.21)", "physics": false, "shape": "image", "size": 36, "x": 474.0, "y": 0.0}, {"color": "#97c2fc", "id": "Castle Locthwain", "image": "https://cards.scryfall.io/normal/front/1/9/19336e3a-2242-4a30-a563-32f2e4fc18e9.jpg?1674142821", "label": "Castle Locthwain \n(synergy: 0.17)", "physics": false, "shape": "image", "size": 34, "x": 493.3616011260927, "y": 67.81099124993081}, {"color": "#97c2fc", "id": "Myriad Landscape", "image": "https://cards.scryfall.io/normal/front/b/f/bf4797b0-4d0a-433f-b891-b14f96fd1484.jpg?1706241199", "label": "Myriad Landscape \n(synergy: -0.04)", "physics": false, "shape": "image", "size": 24, "x": 600.8603873050268, "y": 168.35318520198314}, {"color": "#97c2fc", "id": "Temple of the False God", "image": "https://cards.scryfall.io/normal/front/f/5/f55a1775-9672-4f0c-9aab-30ba90f0d1e6.jpg?1712355186", "label": "Temple of the False God \n(synergy: -0.01)", "physics": false, "shape": "image", "size": 25, "x": 555.8300487123046, "y": 241.43106044682233}, {"color": "#97c2fc", "id": "Sol Ring", "image": "https://cards.scryfall.io/normal/front/6/c/6c5c9437-3d99-4a7c-8255-9acdcb1acc40.jpg?1712354902", "label": "Sol Ring \n(synergy: -0.04)", "physics": false, "shape": "image", "size": 24, "x": 533.1577084370089, "y": 324.22038482211053}, {"color": "#97c2fc", "id": "Bloodsoaked Champion", "image": "https://cards.scryfall.io/normal/front/2/7/275d6137-5eff-4e82-8232-64e8679bc11c.jpg?1674141505", "label": "Bloodsoaked Champion \n(synergy: 0.14)", "physics": false, "shape": "image", "size": 32, "x": 400.2670260034807, "y": 325.6413792722432}, {"color": "#97c2fc", "id": "Warlock Class", "image": "https://cards.scryfall.io/normal/front/b/7/b7faf899-96b7-454e-b634-6684c2d72f26.jpg?1627705543", "label": "Warlock Class \n(synergy: 0.05)", "physics": false, "shape": "image", "size": 28, "x": 389.0552916346329, "y": 416.5764996385307}, {"color": "#97c2fc", "id": "Skullclamp", "image": "https://cards.scryfall.io/normal/front/a/3/a36fd6d8-66a2-49d1-b9f3-b400ebc03674.jpg?1682210228", "label": "Skullclamp \n(synergy: 0.3)", "physics": false, "shape": "image", "size": 40, "x": 242.20573528824426, "y": 343.1273550643856}, {"color": "#97c2fc", "id": "Reanimate", "image": "https://cards.scryfall.io/normal/front/7/d/7d0fe02b-f45a-45c6-ab7c-270594a29da7.jpg?1715080480", "label": "Reanimate \n(synergy: 0.01)", "physics": false, "shape": "image", "size": 26, "x": 273.2786324123045, "y": 527.4038197310108}, {"color": "#97c2fc", "id": "Village Rites", "image": "https://cards.scryfall.io/normal/front/2/8/2841339b-faef-407d-9838-d03fe80e6294.jpg?1698988289", "label": "Village Rites \n(synergy: 0.2)", "physics": false, "shape": "image", "size": 35, "x": 160.7422138420735, "y": 452.2852426170338}, {"color": "#97c2fc", "id": "Dark Ritual", "image": "https://cards.scryfall.io/normal/front/9/5/95f27eeb-6f14-4db3-adb9-9be5ed76b34b.jpg?1628801678", "label": "Dark Ritual \n(synergy: 0.04)", "physics": false, "shape": "image", "size": 28, "x": 117.1906635183173, "y": 563.9524345050179}, {"color": "#97c2fc", "id": "Altar of Bhaal", "image": "https://cards.scryfall.io/normal/front/3/7/37bd2e21-b292-4c86-bd01-010d4a1af7b2.jpg?1674135928", "label": "Altar of Bhaal \n(synergy: 0.05)", "physics": false, "shape": "image", "size": 28, "x": 38.89817561786273, "y": 568.6711984386073}, {"color": "#97c2fc", "id": "Swiftfoot Boots", "image": "https://cards.scryfall.io/normal/front/0/4/04a76643-1703-4fab-8dce-7725490bc2af.jpg?1712354904", "label": "Swiftfoot Boots \n(synergy: -0.13)", "physics": false, "shape": "image", "size": 20, "x": -46.268356261246545, "y": 676.4194255111855}, {"color": "#97c2fc", "id": "Tarrian\u0027s Journal", "image": "https://cards.scryfall.io/normal/front/9/9/99255a66-b868-45fc-a2a9-0c89bd851b69.jpg?1699044198", "label": "Tarrian\u0027s Journal \n(synergy: 0.04)", "physics": false, "shape": "image", "size": 28, "x": -117.19066351831673, "y": 563.9524345050181}, {"color": "#97c2fc", "id": "Deadly Dispute", "image": "https://cards.scryfall.io/normal/front/e/d/ed01650e-4eb5-4884-9cc6-947b0e20dd3c.jpg?1712354280", "label": "Deadly Dispute \n(synergy: 0.09)", "physics": false, "shape": "image", "size": 30, "x": -182.8442682453581, "y": 514.4744634768762}, {"color": "#97c2fc", "id": "Reassembling Skeleton", "image": "https://cards.scryfall.io/normal/front/0/0/00566375-e976-4e96-b751-cf0430452c9c.jpg?1689997423", "label": "Reassembling Skeleton \n(synergy: 0.47)", "physics": false, "shape": "image", "size": 48, "x": -146.30068199850624, "y": 282.3474994519554}, {"color": "#97c2fc", "id": "Piper of the Swarm", "image": "https://cards.scryfall.io/normal/front/b/4/b4810704-beb8-499c-a921-26f672fd33b2.jpg?1631586744", "label": "Piper of the Swarm \n(synergy: 0.13)", "physics": false, "shape": "image", "size": 32, "x": -301.0271281439604, "y": 426.45828415145087}, {"color": "#97c2fc", "id": "Jadar, Ghoulcaller of Nephalia", "image": "https://cards.scryfall.io/normal/front/f/f/ff971ba7-68b8-482a-9cb1-741f6893550c.jpg?1634349933", "label": "Jadar, Ghoulcaller of Nephalia \n(synergy: 0.5)", "physics": false, "shape": "image", "size": 50, "x": -204.7659429655961, "y": 219.25078928343734}, {"color": "#97c2fc", "id": "The Meathook Massacre", "image": "https://cards.scryfall.io/normal/front/0/8/08950015-eee5-4327-888c-82dfd13bb9ad.jpg?1667629608", "label": "The Meathook Massacre \n(synergy: 0.09)", "physics": false, "shape": "image", "size": 30, "x": -423.53836472461296, "y": 344.5740176020251}, {"color": "#97c2fc", "id": "Phyrexian Arena", "image": "https://cards.scryfall.io/normal/front/2/6/26bfb2b4-8dc2-4632-a393-d3477f6c3c40.jpg?1706240778", "label": "Phyrexian Arena \n(synergy: 0.02)", "physics": false, "shape": "image", "size": 27, "x": -502.39860987333503, "y": 305.51536262083533}, {"color": "#97c2fc", "id": "Rise of the Dread Marn", "image": "https://cards.scryfall.io/normal/front/9/d/9d3a1ec1-f362-494d-a23b-6a963ce44fdd.jpg?1631048453", "label": "Rise of the Dread Marn \n(synergy: 0.11)", "physics": false, "shape": "image", "size": 31, "x": -489.79083500391175, "y": 212.74618197789334}, {"color": "#97c2fc", "id": "Bastion of Remembrance", "image": "https://cards.scryfall.io/normal/front/2/8/28aa32ff-3ced-405c-8508-7dd35cd20f02.jpg?1689996883", "label": "Bastion of Remembrance \n(synergy: 0.35)", "physics": false, "shape": "image", "size": 42, "x": -375.5377420656416, "y": 105.22074075123979}, {"color": "#97c2fc", "id": "Braids, Arisen Nightmare", "image": "https://cards.scryfall.io/normal/front/4/f/4ff97c69-6a6b-401c-b0a1-55fa81045d19.jpg?1673307016", "label": "Braids, Arisen Nightmare \n(synergy: 0.23)", "physics": false, "shape": "image", "size": 37, "x": -457.69690706878475, "y": 62.90899188246636}, {"color": "#97c2fc", "id": "Toxic Deluge", "image": "https://cards.scryfall.io/normal/front/5/a/5aa02b7d-db31-4924-b75e-eb02f332ca3a.jpg?1717013647", "label": "Toxic Deluge \n(synergy: 0.06)", "physics": false, "shape": "image", "size": 29, "x": -564.0, "y": 5.700027081827814e-13}, {"color": "#97c2fc", "id": "Murder", "image": "https://cards.scryfall.io/normal/front/1/e/1ea6438b-0e6c-4d65-8bcd-34a988717c81.jpg?1706241725", "label": "Murder \n(synergy: -0.01)", "physics": false, "shape": "image", "size": 25, "x": -600.3556832980165, "y": -82.5169893523248}, {"color": "#97c2fc", "id": "Bontu\u0027s Monument", "image": "https://cards.scryfall.io/normal/front/1/7/171a9a3f-6278-4921-9848-2b8459869d6c.jpg?1676318123", "label": "Bontu\u0027s Monument \n(synergy: 0.32)", "physics": false, "shape": "image", "size": 41, "x": -392.87025323790215, "y": -110.07708263206544}, {"color": "#97c2fc", "id": "Ophiomancer", "image": "https://cards.scryfall.io/normal/front/a/4/a402cff8-be7f-4473-b880-a6a2eedfda86.jpg?1717013639", "label": "Ophiomancer \n(synergy: 0.39)", "physics": false, "shape": "image", "size": 44, "x": -335.69933635099596, "y": -145.81479888372397}, {"color": "#97c2fc", "id": "Vito, Thorn of the Dusk Rose", "image": "https://cards.scryfall.io/normal/front/0/f/0fe79ee4-c3f3-4a6b-a967-203ca3b70ee5.jpg?1594736442", "label": "Vito, Thorn of the Dusk Rose \n(synergy: 0.21)", "physics": false, "shape": "image", "size": 36, "x": -404.9947977550359, "y": -246.282792316795}, {"color": "#97c2fc", "id": "Sengir Autocrat", "image": "https://cards.scryfall.io/normal/front/8/3/83fa8a17-ff86-465e-9092-0968081f4e28.jpg?1580014357", "label": "Sengir Autocrat \n(synergy: 0.37)", "physics": false, "shape": "image", "size": 43, "x": -293.218867886271, "y": -238.55124295524757}, {"color": "#97c2fc", "id": "Chittering Witch", "image": "https://cards.scryfall.io/normal/front/b/5/b57c76be-082e-4552-9830-403a98992619.jpg?1631586509", "label": "Chittering Witch \n(synergy: 0.36)", "physics": false, "shape": "image", "size": 43, "x": -262.10040699596357, "y": -280.6410102827993}, {"color": "#97c2fc", "id": "Bloodletter of Aclazotz", "image": "https://cards.scryfall.io/normal/front/d/4/d4f6027a-003a-4f9d-929a-0b6da1fa42c9.jpg?1699044094", "label": "Bloodletter of Aclazotz \n(synergy: 0.28)", "physics": false, "shape": "image", "size": 39, "x": -249.12589915362295, "y": -352.9309937805107}, {"color": "#97c2fc", "id": "Nyx Lotus", "image": "https://cards.scryfall.io/normal/front/5/b/5bd6353f-d119-40e6-895c-030a11a7a2fe.jpg?1594077250", "label": "Nyx Lotus \n(synergy: 0.13)", "physics": false, "shape": "image", "size": 32, "x": -240.1539496956617, "y": -463.47608400603974}, {"color": "#97c2fc", "id": "Grave Pact", "image": "https://cards.scryfall.io/normal/front/f/5/f5a4970b-2ba6-4c91-a301-369369cdf360.jpg?1689997226", "label": "Grave Pact \n(synergy: 0.14)", "physics": false, "shape": "image", "size": 32, "x": -172.79787988022898, "y": -486.2066358133113}, {"color": "#97c2fc", "id": "Endrek Sahr, Master Breeder", "image": "https://cards.scryfall.io/normal/front/1/2/123490fb-5908-45f2-b376-7959ccdf9c3e.jpg?1690663179", "label": "Endrek Sahr, Master Breeder \n(synergy: 0.48)", "physics": false, "shape": "image", "size": 49, "x": -63.47827607242171, "y": -305.4742353568848}, {"color": "#97c2fc", "id": "Ghoulcaller Gisa", "image": "https://cards.scryfall.io/normal/front/4/4/44d7906e-8a89-4644-acb5-46fbe97ab39f.jpg?1689997183", "label": "Ghoulcaller Gisa \n(synergy: 0.19)", "physics": false, "shape": "image", "size": 35, "x": -33.16581289522985, "y": -484.8670218266021}, {"color": "#97c2fc", "id": "Liliana, Death\u0027s Majesty", "image": "https://cards.scryfall.io/normal/front/b/6/b63ae119-f91e-4d0d-8bbd-65350a4d47c4.jpg?1637633118", "label": "Liliana, Death\u0027s Majesty \n(synergy: 0.05)", "physics": false, "shape": "image", "size": 28, "x": 38.89817561786296, "y": -568.6711984386073}, {"color": "#97c2fc", "id": "Lolth, Spider Queen", "image": "https://cards.scryfall.io/normal/front/4/2/420a5689-d73e-4dda-82fd-8b8897ff5b55.jpg?1628185302", "label": "Lolth, Spider Queen \n(synergy: 0.12)", "physics": false, "shape": "image", "size": 31, "x": 107.42477489179129, "y": -516.9563982962663}, {"color": "#97c2fc", "id": "Black Market", "image": "https://cards.scryfall.io/normal/front/7/8/78c80c6d-f3ae-48d3-ba6a-b9b738e1affb.jpg?1674141496", "label": "Black Market \n(synergy: 0.08)", "physics": false, "shape": "image", "size": 30, "x": 184.8535459183852, "y": -520.1280290095887}, {"color": "#97c2fc", "id": "Gray Merchant of Asphodel", "image": "https://cards.scryfall.io/normal/front/7/c/7c1a7dd8-8034-4f59-a351-33666b26ff5a.jpg?1581479807", "label": "Gray Merchant of Asphodel \n(synergy: 0.28)", "physics": false, "shape": "image", "size": 39, "x": 198.7480962998585, "y": -383.5664143498257}, {"color": "#97c2fc", "id": "Ogre Slumlord", "image": "https://cards.scryfall.io/normal/front/7/6/76995067-81a3-41c5-bc95-bfa5a953700d.jpg?1712354338", "label": "Ogre Slumlord \n(synergy: 0.24)", "physics": false, "shape": "image", "size": 37, "x": 262.9662268843803, "y": -372.53827121276095}, {"color": "#97c2fc", "id": "Syr Konrad, the Grim", "image": "https://cards.scryfall.io/normal/front/9/2/9241a72e-cb88-4cea-a2f4-ff10af461437.jpg?1706240798", "label": "Syr Konrad, the Grim \n(synergy: 0.32)", "physics": false, "shape": "image", "size": 41, "x": 278.48168243321163, "y": -298.1810734254738}, {"color": "#97c2fc", "id": "Bolas\u0027s Citadel", "image": "https://cards.scryfall.io/normal/front/d/2/d2124603-d20e-40eb-97f0-a66323397ac2.jpg?1591205069", "label": "Bolas\u0027s Citadel \n(synergy: 0.16)", "physics": false, "shape": "image", "size": 33, "x": 390.9584905150286, "y": -318.0683239403294}, {"color": "#97c2fc", "id": "Necrotic Hex", "image": "https://cards.scryfall.io/normal/front/0/0/009d2fb8-6144-46d9-9085-26232c174109.jpg?1608909836", "label": "Necrotic Hex \n(synergy: 0.05)", "physics": false, "shape": "image", "size": 28, "x": 487.0190605914995, "y": -296.16285152019543}, {"color": "#97c2fc", "id": "Plague of Vermin", "image": "https://cards.scryfall.io/normal/front/2/3/231613d6-d3b8-4b41-bc93-4d5da3fec5d0.jpg?1562827857", "label": "Plague of Vermin \n(synergy: 0.39)", "physics": false, "shape": "image", "size": 44, "x": 335.69933635099636, "y": -145.81479888372306}, {"color": "#97c2fc", "id": "Abhorrent Overlord", "image": "https://cards.scryfall.io/normal/front/4/4/4415d050-7a76-4f8b-bf78-e33dd21fe4f1.jpg?1562817335", "label": "Abhorrent Overlord \n(synergy: 0.49)", "physics": false, "shape": "image", "size": 49, "x": 294.6526899284269, "y": -82.55781197404815}, {"color": "#97c2fc", "id": "Army of the Damned", "image": "https://cards.scryfall.io/normal/front/b/f/bf818314-1eb4-48da-8e6f-ff7b89873b63.jpg?1673484100", "label": "Army of the Damned \n(synergy: 0.41)", "physics": false, "shape": "image", "size": 45, "x": 350.7028248968614, "y": -48.202993780069654}]);
+                  edges = new vis.DataSet([{"from": "Ayara, First of Locthwain", "to": "Witch\u0027s Cottage", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Castle Locthwain", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Myriad Landscape", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Temple of the False God", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Sol Ring", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Bloodsoaked Champion", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Warlock Class", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Skullclamp", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Reanimate", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Village Rites", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Dark Ritual", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Altar of Bhaal", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Swiftfoot Boots", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Tarrian\u0027s Journal", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Deadly Dispute", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Reassembling Skeleton", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Piper of the Swarm", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Jadar, Ghoulcaller of Nephalia", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "The Meathook Massacre", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Phyrexian Arena", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Rise of the Dread Marn", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Bastion of Remembrance", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Braids, Arisen Nightmare", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Toxic Deluge", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Murder", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Bontu\u0027s Monument", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Ophiomancer", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Vito, Thorn of the Dusk Rose", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Sengir Autocrat", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Chittering Witch", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Bloodletter of Aclazotz", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Nyx Lotus", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Grave Pact", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Endrek Sahr, Master Breeder", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Ghoulcaller Gisa", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Liliana, Death\u0027s Majesty", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Lolth, Spider Queen", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Black Market", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Gray Merchant of Asphodel", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Ogre Slumlord", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Syr Konrad, the Grim", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Bolas\u0027s Citadel", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Necrotic Hex", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Plague of Vermin", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Abhorrent Overlord", "width": 1}, {"from": "Ayara, First of Locthwain", "to": "Army of the Damned", "width": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
