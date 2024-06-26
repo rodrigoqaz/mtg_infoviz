@@ -26,52 +26,93 @@ with tab1:
             st.session_state["deck"] = deck
             st.text_area("Deck:", deck, height=300)
 
-    df_commander_cards = get_data()
-
+    def display_example_card(card_name):
+        
+        if "select_file_text" not in st.session_state:
+            st.session_state.select_file_text = False
+        
+        def callback_bt_select_file():
+            st.session_state.show_analisys_page = True
+            st.session_state.select_file_text = False
+        
+        match card_name:
+            case 'Ayara, First of Locthwain':
+                filename = 'exemplo_deck_ayara.txt'
+            case 'Oloro, Ageless Ascetic':
+                filename = 'exemplo_deck_oloro.txt'
+            case 'Pantlaza, Sun-Favored':
+                filename = 'exemplo_deck_pantlaza.txt'
+        st.header(card_name)
+        example_card = df_commander_cards[df_commander_cards['name'] == card_name]
+        st.image(example_card['image_uris.normal'].values[0])
+        
+        if st.button('Selecionar', key=card_name):
+            with open(filename) as file:
+                st.session_state['deck'] = file.read()
+            st.text_area("Deck:", st.session_state['deck'], height=300)
+            st.session_state["commander"] = card_name
+            st.session_state.select_file_text = True
+            
+        if st.session_state.select_file_text:
+            if st.button('Carregar Deck', key='carregar'+card_name, on_click=callback_bt_select_file):
+                print('teste')
+                
     st.markdown(css, unsafe_allow_html=True)
     st.header("Analise o seu Deck")
-
-    # Selecionar o comandante
-    # Importar o Deck
-    # Processar
-    #   Limpa a tela e mostra as análise
-    #   Botão para nova análise
-
-    if "show_commander_selectbox" not in st.session_state:
-        st.session_state.show_commander_selectbox = True
-
-    if "show_deck_fileuploader" not in st.session_state:
-        st.session_state.show_deck_fileuploader = False
-
-    if "show_process_button" not in st.session_state:
-        st.session_state.show_process_button = False
-
+    df_commander_cards = get_data()
     if "show_analisys_page" not in st.session_state:
-        st.session_state.show_analisys_page = False
+            st.session_state.show_analisys_page = False
+    
+    opcao_deck = st.radio(
+        label = 'Que tipo de dado gostaria de utilizar?', 
+        options=['Utilizar um deck de exemplo', 'Importar o próprio deck'], 
+        horizontal=True,
+        index=None
+        )
 
-    if st.session_state.show_commander_selectbox:
-        commander = st.selectbox("Seleciona o Commander:", options=df_commander_cards['name'].to_list())
-        st.session_state["commander"] = commander
-        if st.button('Selecionar o deck'):
-            st.session_state.show_deck_fileuploader = True
+    if opcao_deck == 'Utilizar um deck de exemplo':
+        
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            display_example_card('Ayara, First of Locthwain')
+        with col2:
+            display_example_card('Oloro, Ageless Ascetic')
+        with col3:
+            display_example_card('Pantlaza, Sun-Favored')
 
-    if st.session_state.show_deck_fileuploader:
-        uploaded_file = st.file_uploader("Selecione o arquivo do seu deck", accept_multiple_files=False, type='txt')
-        if uploaded_file is not None:
-            display_deck_fileuploader(uploaded_file)
-            st.session_state.show_process_button = True
-
-    if st.session_state.show_process_button:
-        if st.button("Importar o deck"):
+    if opcao_deck == 'Importar o próprio deck':
+        
+        if "show_commander_selectbox" not in st.session_state:
             st.session_state.show_commander_selectbox = False
+
+        if "show_deck_fileuploader" not in st.session_state:
             st.session_state.show_deck_fileuploader = False
+
+        if "show_process_button" not in st.session_state:
             st.session_state.show_process_button = False
-            st.session_state.show_analisys_page = True
-            st.rerun()
 
+        if st.session_state.show_commander_selectbox:
+            commander = st.selectbox("Seleciona o Commander:", options=df_commander_cards['name'].to_list())
+            st.session_state["commander"] = commander
+            if st.button('Selecionar o deck'):
+                st.session_state.show_deck_fileuploader = True
 
+        if st.session_state.show_deck_fileuploader:
+            uploaded_file = st.file_uploader("Selecione o arquivo do seu deck", accept_multiple_files=False, type='txt')
+            if uploaded_file is not None:
+                display_deck_fileuploader(uploaded_file)
+                st.session_state.show_process_button = True
+
+        if st.session_state.show_process_button:
+            if st.button("Importar o deck"):
+                st.session_state.show_commander_selectbox = False
+                st.session_state.show_deck_fileuploader = False
+                st.session_state.show_process_button = False
+                st.session_state.show_analisys_page = True
+                st.rerun()
 
 with tab2:
+    
     if st.session_state.show_analisys_page:
         deck = [line[2:].strip() for line in st.session_state["deck"].strip().split('\n')]
         commander = st.session_state["commander"]
