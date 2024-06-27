@@ -114,8 +114,8 @@ with tab3:
     st.header("Equipe")
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.html('<div style="text-align: center; font-size: 30px"> Allana Silva </div>')
-        st.image("https://github.com/allanaasilva.png")
+        st.html('<div style="text-align: left; font-size: 30px"> Allana Silva </div>')
+        st.image("https://github.com/allanaasilva.png", width = 250)
         st.write("""
                  - Estatístico
                  - Mestrando do Mecai
@@ -126,8 +126,8 @@ with tab3:
                  """)   
 
     with col2:
-        st.html('<div style="text-align: center; font-size: 30px"> Danielle Silveira </div>')
-        st.image("https://github.com/danifowl.png")
+        st.html('<div style="text-align: left; font-size: 30px"> Danielle Silveira </div>')
+        st.image("https://github.com/danifowl.png", width = 250)
         st.write("""
                  - Capacity Planning Analyst
                  - Mestrando do Mecai
@@ -138,8 +138,8 @@ with tab3:
                  """)   
 
     with col3:
-        st.html('<div style="text-align: center; font-size: 30px"> Rodrigo Oliveira </div>')
-        st.image("https://github.com/rodrigoqaz.png")
+        st.html('<div style="text-align: left; font-size: 30px"> Rodrigo Oliveira </div>')
+        st.image("https://github.com/rodrigoqaz.png", width = 250)
         st.write("""
                  - Estatístico
                  - Mestrando do Mecai
