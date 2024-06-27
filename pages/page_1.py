@@ -29,7 +29,7 @@ df_commander_cards = get_data()
 
 
 st.header("Visão Commander")
-st.dataframe(df_commander_cards.head(10))
+# st.dataframe(df_commander_cards.head(10))
 
 st.plotly_chart(
     vis_commander_by_released_date(df_commander_cards),
