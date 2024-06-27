@@ -2,6 +2,10 @@ import streamlit as st
 import streamlit.components.v1 as components
 from src.scryfall import ScryfallHandler
 from src.visualizations import add_logo, vis_sinergy_graph, vis_word_cloud
+from src.visualizations import vis_distribuition
+from src.visualizations import vis_colors_rank
+from src.visualizations import vis_type_line
+from src.visualizations import vis_rarity
 from src.obtain_sinergy import obtain_sinergy
 
 
@@ -157,17 +161,26 @@ with tab3:
 with tab4:
     if st.session_state.show_analisys_page:
         st.header('Idade do Deck')
+
         st.header('CMC')
+        st.plotly_chart(vis_distribuition(df_commander_cards_deck))
+
         st.header('Subtipos mais frequentes do deck')
-        
+        fig_count, fig_avg_cmc = vis_type_line(df_commander_cards_deck)
+        st.plotly_chart(fig_count)
+        st.plotly_chart(fig_avg_cmc)
+
         st.header('Raridade')
+        fig_count, fig_avg_cmc = vis_rarity(df_commander_cards_deck)
+        st.plotly_chart(fig_count)
+        st.plotly_chart(fig_avg_cmc)
+
         st.header('top 10 mais caras')
         st.header('cartas banidas')
 
         st.header('Cores')
-        
-        
-        
+        st.plotly_chart(vis_colors_rank(df_commander_cards_deck))
+
         st.header('Ver se tem carta engraçada')
 
 if st.button('Nova análise'):
