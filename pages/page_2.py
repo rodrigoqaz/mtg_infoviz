@@ -1,11 +1,10 @@
 import streamlit as st
 import streamlit.components.v1 as components
+from IPython.display import display, HTML
 from src.scryfall import ScryfallHandler
 from src.visualizations import add_logo, vis_sinergy_graph, vis_word_cloud
-from src.visualizations import vis_distribuition
-from src.visualizations import vis_colors_rank
-from src.visualizations import vis_type_line
-from src.visualizations import vis_rarity
+from src.visualizations import vis_distribuition, vis_more_expensive_cards
+from src.visualizations import vis_colors_rank, vis_type_line, vis_rarity, vis_age
 from src.obtain_sinergy import obtain_sinergy
 
 
@@ -149,8 +148,8 @@ with tab3:
             # Exibi a nuvem de palavras apenas após a seleção do usuário
             if st.button("Exibir nuvem de palavras"):
                 # Nuvem de palavras
-                image_buffer = vis_word_cloud(df_commander_cards_deck, 'Palavras-chave',
-                                            modulo)
+                image_buffer = vis_word_cloud(df_commander_cards_deck,
+                                              'Palavras-chave', modulo)
                 st.image(image_buffer, use_column_width=True)
 
         else:
@@ -161,6 +160,7 @@ with tab3:
 with tab4:
     if st.session_state.show_analisys_page:
         st.header('Idade do Deck')
+        st.plotly_chart(vis_age(df_commander_cards_deck))
 
         st.header('CMC')
         st.plotly_chart(vis_distribuition(df_commander_cards_deck))
@@ -175,8 +175,10 @@ with tab4:
         st.plotly_chart(fig_count)
         st.plotly_chart(fig_avg_cmc)
 
-        st.header('top 10 mais caras')
-        st.header('cartas banidas')
+        html_content = vis_more_expensive_cards(df_commander_cards_deck)
+        st.markdown(html_content, unsafe_allow_html=True)
+
+        st.header('Cartas banidas')
 
         st.header('Cores')
         st.plotly_chart(vis_colors_rank(df_commander_cards_deck))

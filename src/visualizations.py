@@ -3,6 +3,7 @@ import pandas as pd
 import requests
 import plotly.graph_objects as go
 import plotly.express as px
+from datetime import datetime
 import streamlit as st
 from wordcloud import WordCloud
 from PIL import Image
@@ -57,6 +58,29 @@ def vis_commander_by_released_date(df_commander_cards):
     fig.update_layout(title='Quantidade de Commandantes lançados por ano',
                     xaxis_title='Ano',
                     yaxis_title='Quantidade')
+    return fig
+
+
+def vis_age(df):
+
+    df['released_at'] = pd.to_datetime(df['released_at'])
+
+    # Calculando a idade das cartas com base na data de lançamento
+    today = datetime.today()
+    df['idade'] = today.year - df['released_at'].dt.year
+
+    df = df.sort_values('idade', ascending=False)
+    fig = px.bar(df, x='name', y='idade',
+                 labels={'idade': 'Idade da Carta', 'name': 'Nome da Carta'},
+                 title='Idade das Cartas (anos)',
+                 text='idade',
+                 color='name',
+                 template='seaborn')
+
+    fig.update_layout(xaxis_title='Nome da Carta',
+                      yaxis_title='Idade da Carta', xaxis_tickangle=-45,
+                      showlegend=False)
+
     return fig
 
 
@@ -223,6 +247,18 @@ def vis_rarity(df):
     fig2.update_traces(textfont_size=8)
 
     return fig1, fig2
+
+
+def vis_more_expensive_cards(df):
+    top_10_expensive_cards = df.sort_values(by='prices.usd', ascending=False).head(10)
+    html_content = '<h3>Cartas mais caras:</h3><div style="display: flex; flex-wrap: wrap;">'
+    for _, card in top_10_expensive_cards.iterrows():
+        html_content += '<div style="margin: 10px; text-align: center;">'
+        html_content += f'<img src="{card["image_uris.small"]}" alt="{card["name"]}" style="width: 200px;"/>'
+        html_content += f'<p>{card["name"]} - USD {card["prices.usd"]}</p>'
+        html_content += '</div>'
+    html_content += '</div>'
+    return html_content
 
 
 # def vis_edhrec_rank(df):
