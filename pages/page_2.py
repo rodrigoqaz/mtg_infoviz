@@ -66,8 +66,18 @@ with tab1:
     st.markdown(css, unsafe_allow_html=True)
     st.header("Analise o seu Deck")
     df_commander_cards = get_data()
+
     if "show_analisys_page" not in st.session_state:
-            st.session_state.show_analisys_page = False
+        st.session_state.show_analisys_page = False
+
+    if "show_commander_selectbox" not in st.session_state:
+        st.session_state.show_commander_selectbox = False
+
+    if "show_deck_fileuploader" not in st.session_state:
+        st.session_state.show_deck_fileuploader = False
+
+    if "show_process_button" not in st.session_state:
+        st.session_state.show_process_button = False
 
     opcao_deck = st.radio(
         label = 'Que tipo de dado gostaria de utilizar?',
@@ -87,16 +97,9 @@ with tab1:
             display_example_card('Pantlaza, Sun-Favored')
 
     if opcao_deck == 'Importar o próprio deck':
-
-        if "show_commander_selectbox" not in st.session_state:
-            st.session_state.show_commander_selectbox = False
-
-        if "show_deck_fileuploader" not in st.session_state:
-            st.session_state.show_deck_fileuploader = False
-
-        if "show_process_button" not in st.session_state:
-            st.session_state.show_process_button = False
-
+        
+        st.session_state.show_commander_selectbox = True
+        
         if st.session_state.show_commander_selectbox:
             commander = st.selectbox("Seleciona o Commander:",
                                      options=df_commander_cards[
