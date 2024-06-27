@@ -30,14 +30,20 @@ class ScryfallHandler:
             print("Falha ao obter os dados", response.status_code)
             print("Resposta:", response.text)
 
-    def commander_cards(self, option = 'data_frame'):
+    def commander_cards(self, option = 'data_frame', only_commander = True):
         '''
             options: data_frame | download
         '''
         
-        query = (
-            '((type:legendary type:creature) OR (type:planeswalker oracle:"this card can be your commander")) AND legal:commander'
-        )
+        if only_commander:
+            query = (
+                '((type:legendary type:creature) OR (type:planeswalker oracle:"this card can be your commander")) AND legal:commander'
+            )
+        else:
+            query = (
+                '((type:legendary type:creature) OR (type:planeswalker oracle:"this card can be your commander") OR (st:commander)) AND legal:commander'
+            )
+
         params = {
             'q': query,
             'order': 'name',
