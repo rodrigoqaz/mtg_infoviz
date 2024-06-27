@@ -1,17 +1,15 @@
 import io
-import pandas as pd
+import math
 import requests
+import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 from datetime import datetime
 import streamlit as st
 from wordcloud import WordCloud
-from PIL import Image
-from io import BytesIO
 import matplotlib.pyplot as plt
 import networkx as nx
 from pyvis.network import Network
-import math
 
 
 def add_logo():
@@ -62,24 +60,21 @@ def vis_commander_by_released_date(df_commander_cards):
 
 
 def vis_age(df):
-
     df['released_at'] = pd.to_datetime(df['released_at'])
-
-    # Calculando a idade das cartas com base na data de lançamento
     today = datetime.today()
     df['idade'] = today.year - df['released_at'].dt.year
 
-    df = df.sort_values('idade', ascending=False)
-    fig = px.bar(df, x='name', y='idade',
-                 labels={'idade': 'Idade da Carta', 'name': 'Nome da Carta'},
-                 title='Idade das Cartas (anos)',
-                 text='idade',
-                 color='name',
-                 template='seaborn')
+    freq = df['idade'].value_counts().sort_values(ascending=False)
 
-    fig.update_layout(xaxis_title='Nome da Carta',
-                      yaxis_title='Idade da Carta', xaxis_tickangle=-45,
-                      showlegend=False)
+    fig = px.bar(x=freq.index, y=freq.values,
+                 labels={'x': 'Idade (anos)', 'y': 'Frequência'},
+                 title='Frequência da Idade das Cartas (anos)',
+                 text=freq.values,
+                 opacity=0.8,
+                 color_discrete_sequence=['indianred'])
+
+    fig.update_layout(showlegend=False)
+    fig.update_xaxes(type='category')
 
     return fig
 
@@ -87,12 +82,12 @@ def vis_age(df):
 def vis_distribuition(df):
 
     fig = px.histogram(df,
-                    x='cmc',
-                    title = ('Distribuição de Custo de Mana Convertido '
-                             '(CMC) dos Comandantes'),
-                    labels={'cmc':'CMC'},
-                    opacity=0.8,
-                    color_discrete_sequence=['indianred'])
+                       x='cmc',
+                       title=('Distribuição de Custo de Mana Convertido '
+                              '(CMC) dos Comandantes'),
+                       labels={'cmc': 'CMC'},
+                       opacity=0.8,
+                       color_discrete_sequence=['indianred'])
     fig.update_layout(yaxis_title="Quantidade")
 
     return fig
@@ -250,13 +245,20 @@ def vis_rarity(df):
 
 
 def vis_more_expensive_cards(df):
+
     top_10_expensive_cards = df.sort_values(by='prices.usd', ascending=False).head(10)
     html_content = '<h3>Cartas mais caras:</h3><div style="display: flex; flex-wrap: wrap;">'
+
+    count = 0
     for _, card in top_10_expensive_cards.iterrows():
+        if count % 3 == 0 and count != 0:
+            html_content += '</div><div style="display: flex; flex-wrap: wrap;">'
         html_content += '<div style="margin: 10px; text-align: center;">'
-        html_content += f'<img src="{card["image_uris.small"]}" alt="{card["name"]}" style="width: 200px;"/>'
-        html_content += f'<p>{card["name"]} - USD {card["prices.usd"]}</p>'
+        html_content += f'<img src="{card["image_uris.small"]}" alt="{card["name"]}" style="width: 150px;"/>'
+        html_content += f'<p style="font-size: 11px;">{card["name"]} - USD {card["prices.usd"]}</p>'
         html_content += '</div>'
+        count += 1
+
     html_content += '</div>'
     return html_content
 

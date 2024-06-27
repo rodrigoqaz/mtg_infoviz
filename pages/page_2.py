@@ -1,16 +1,17 @@
 import streamlit as st
 import streamlit.components.v1 as components
-from IPython.display import display, HTML
 from src.scryfall import ScryfallHandler
 from src.visualizations import add_logo, vis_sinergy_graph, vis_word_cloud
 from src.visualizations import vis_distribuition, vis_more_expensive_cards
-from src.visualizations import vis_colors_rank, vis_type_line, vis_rarity, vis_age
+from src.visualizations import vis_colors_rank, vis_type_line, vis_rarity
+from src.visualizations import vis_age
 from src.obtain_sinergy import obtain_sinergy
 
 
 add_logo()
 
-tab1, tab2, tab3, tab4 = st.tabs(["Importar o Deck", "Sinergia e Combos", "Nuvem de Palavras", "Estatísticas do Deck"])
+tab1, tab2, tab3, tab4 = st.tabs(["Importar o Deck", "Sinergia e Combos",
+                                  "Nuvem de Palavras", "Estatísticas do Deck"])
 
 
 with tab1:
@@ -19,9 +20,9 @@ with tab1:
         css = file.read().rstrip()
 
     scryfall_handler = ScryfallHandler()
-    @st.cache_data(experimental_allow_widgets = True, show_spinner = False)
+    @st.cache_data(experimental_allow_widgets=True, show_spinner=False)
     def get_data():
-        return scryfall_handler.commander_cards()
+        return scryfall_handler.commander_cards(only_commander=False)
 
     def display_deck_fileuploader(uploaded_file):
         if uploaded_file is not None:
@@ -30,14 +31,14 @@ with tab1:
             st.text_area("Deck:", deck, height=300)
 
     def display_example_card(card_name):
-        
+
         if "select_file_text" not in st.session_state:
             st.session_state.select_file_text = False
-        
+
         def callback_bt_select_file():
             st.session_state.show_analisys_page = True
             st.session_state.select_file_text = False
-        
+
         match card_name:
             case 'Ayara, First of Locthwain':
                 filename = 'exemplo_deck_ayara.txt'
@@ -46,35 +47,37 @@ with tab1:
             case 'Pantlaza, Sun-Favored':
                 filename = 'exemplo_deck_pantlaza.txt'
         st.header(card_name)
-        example_card = df_commander_cards[df_commander_cards['name'] == card_name]
+        example_card = df_commander_cards[df_commander_cards[
+            'name'] == card_name]
         st.image(example_card['image_uris.normal'].values[0])
-        
+
         if st.button('Selecionar', key=card_name):
             with open(filename) as file:
                 st.session_state['deck'] = file.read()
             st.text_area("Deck:", st.session_state['deck'], height=300)
             st.session_state["commander"] = card_name
             st.session_state.select_file_text = True
-            
+
         if st.session_state.select_file_text:
-            if st.button('Carregar Deck', key='carregar'+card_name, on_click=callback_bt_select_file):
+            if st.button('Carregar Deck', key='carregar' + card_name,
+                         on_click=callback_bt_select_file):
                 print('teste')
-                
+
     st.markdown(css, unsafe_allow_html=True)
     st.header("Analise o seu Deck")
     df_commander_cards = get_data()
     if "show_analisys_page" not in st.session_state:
             st.session_state.show_analisys_page = False
-    
+
     opcao_deck = st.radio(
-        label = 'Que tipo de dado gostaria de utilizar?', 
-        options=['Utilizar um deck de exemplo', 'Importar o próprio deck'], 
+        label = 'Que tipo de dado gostaria de utilizar?',
+        options=['Utilizar um deck de exemplo', 'Importar o próprio deck'],
         horizontal=True,
         index=None
         )
 
     if opcao_deck == 'Utilizar um deck de exemplo':
-        
+
         col1, col2, col3 = st.columns(3)
         with col1:
             display_example_card('Ayara, First of Locthwain')
@@ -84,7 +87,7 @@ with tab1:
             display_example_card('Pantlaza, Sun-Favored')
 
     if opcao_deck == 'Importar o próprio deck':
-        
+
         if "show_commander_selectbox" not in st.session_state:
             st.session_state.show_commander_selectbox = False
 
@@ -95,13 +98,17 @@ with tab1:
             st.session_state.show_process_button = False
 
         if st.session_state.show_commander_selectbox:
-            commander = st.selectbox("Seleciona o Commander:", options=df_commander_cards['name'].to_list())
+            commander = st.selectbox("Seleciona o Commander:",
+                                     options=df_commander_cards[
+                                         'name'].to_list())
             st.session_state["commander"] = commander
             if st.button('Selecionar o deck'):
                 st.session_state.show_deck_fileuploader = True
 
         if st.session_state.show_deck_fileuploader:
-            uploaded_file = st.file_uploader("Selecione o arquivo do seu deck", accept_multiple_files=False, type='txt')
+            uploaded_file = st.file_uploader("Selecione o arquivo do seu deck",
+                                             accept_multiple_files=False,
+                                             type='txt')
             if uploaded_file is not None:
                 display_deck_fileuploader(uploaded_file)
                 st.session_state.show_process_button = True
@@ -115,16 +122,17 @@ with tab1:
                 st.rerun()
 
 with tab2:
-    
+
     if st.session_state.show_analisys_page:
-        deck = [line[2:].strip() for line in st.session_state["deck"].strip().split('\n')]
+        deck = [line[2:].strip() for line in st.session_state[
+            "deck"].strip().split('\n')]
         commander = st.session_state["commander"]
         sinergy = obtain_sinergy(commander, deck)
-        vis_sinergy_graph(sinergy['cards_with_synergy'],commander)
+        vis_sinergy_graph(sinergy['cards_with_synergy'], commander)
         st.header('Sinergia entre o Commander e seu deck')
         HtmlFile = open("synergy.html", 'r', encoding='utf-8')
-        source_code = HtmlFile.read() 
-        components.html(source_code, height = 760)
+        source_code = HtmlFile.read()
+        components.html(source_code, height=760)
         st.header('Grafo dos combos')
         st.header('Lista das cartas sem sinergia')
 
@@ -132,10 +140,10 @@ with tab3:
     if st.session_state.show_analisys_page:
         st.header("Nuvem de Palavras")
         df_commander_cards_deck = df_commander_cards.query('name in @deck')
-        input_type = st.selectbox("Escolha nuvem de palavras que gostaria de exibir:",
-                                ['Carta Texto', 'Palavras-chave'],
-                                help="""Selecione o tipo de nuvem de palavras que
-                                deseja visualizar.""")
+        input_type = st.selectbox(
+            "Escolha nuvem de palavras que gostaria de exibir:",
+            ['Carta Texto', 'Palavras-chave'],
+            help="""Selecione o tipo de nuvem de palavras que deseja visualizar.""")
 
         if input_type == 'Palavras-chave':
             modulo = st.selectbox("Escolha como gostaria que as palavras-chave fossem"
@@ -154,11 +162,13 @@ with tab3:
 
         else:
             if st.button("Exibir nuvem de palavras"):
-                image_buffer = vis_word_cloud(df_commander_cards_deck, 'Carta Texto', None)
+                image_buffer = vis_word_cloud(df_commander_cards_deck,
+                                              'Carta Texto', None)
                 st.image(image_buffer, use_column_width=True)
 
 with tab4:
     if st.session_state.show_analisys_page:
+        df_commander_cards_deck = df_commander_cards.query('name in @deck')
         st.header('Idade do Deck')
         st.plotly_chart(vis_age(df_commander_cards_deck))
 
