@@ -4,7 +4,7 @@ from src.scryfall import ScryfallHandler
 from src.visualizations import add_logo, vis_sinergy_graph, vis_word_cloud
 from src.visualizations import vis_distribuition, vis_more_expensive_cards
 from src.visualizations import vis_colors_rank, vis_type_line, vis_rarity
-from src.visualizations import vis_age
+from src.visualizations import vis_age, vis_combos_graph
 from src.obtain_sinergy import obtain_sinergy
 
 
@@ -132,11 +132,18 @@ with tab2:
         commander = st.session_state["commander"]
         sinergy = obtain_sinergy(commander, deck)
         vis_sinergy_graph(sinergy['cards_with_synergy'], commander)
+        vis_combos_graph(commander, deck)
+        
         st.header('Sinergia entre o Commander e seu deck')
-        HtmlFile = open("synergy.html", 'r', encoding='utf-8')
-        source_code = HtmlFile.read()
-        components.html(source_code, height=760)
+        html_file_sinergy = open("synergy.html", 'r', encoding='utf-8')
+        source_code_sinergy = html_file_sinergy.read()
+        components.html(source_code_sinergy, height=760)
+        
         st.header('Grafo dos combos')
+        html_file_combos = open("combos.html", 'r', encoding='utf-8')
+        source_code_combos = html_file_combos.read()
+        components.html(source_code_combos, height=760)
+
         st.header('Lista das cartas sem sinergia')
 
 with tab3:
@@ -157,7 +164,9 @@ with tab3:
                                 sejam tratadas em conjunto, ou individualmente!""")
 
             # Exibi a nuvem de palavras apenas após a seleção do usuário
+            
             if st.button("Exibir nuvem de palavras"):
+                df_commander_cards_deck.to_csv('teste.csv')
                 # Nuvem de palavras
                 image_buffer = vis_word_cloud(df_commander_cards_deck,
                                               'Palavras-chave', modulo)

@@ -10,7 +10,9 @@ from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import networkx as nx
 from pyvis.network import Network
-
+from pyedhrec import EDHRec
+from PIL import Image, ImageEnhance
+import base64
 
 def add_logo():
     st.set_page_config(
@@ -159,6 +161,7 @@ def vis_colors_rank(df):
 
     return fig
 
+
 def split_types(type_line):
     if pd.isna(type_line):
         return []
@@ -167,6 +170,7 @@ def split_types(type_line):
         subtypes = parts[1].split('//')
         return [subtype.strip() for subtype in subtypes]
     return []
+
 
 def vis_type_line(df):
     # Aplica a função split_types para processar os subtipos
@@ -346,5 +350,83 @@ def vis_sinergy_graph(cards_sinergy, commander):
     net.from_nx(graph)
     net.show('synergy.html')
 
-def vis_histogram():
-    pass
+
+def vis_combos_graph(commander, deck_cards):
+    
+    edhrec = EDHRec()
+
+    def load_image(url, alpha):
+        response = requests.get(url)
+        img = Image.open(io.BytesIO(response.content)).convert("RGBA")
+        alpha_img = ImageEnhance.Brightness(img.split()[3]).enhance(alpha)
+        img.putalpha(alpha_img)
+        buffered = io.BytesIO()
+        img.save(buffered, format="PNG")
+        img_str = base64.b64encode(buffered.getvalue()).decode()
+        return f"data:image/png;base64,{img_str}"
+
+
+    def get_card_image_url(card_name):
+        response = requests.get(f"https://api.scryfall.com/cards/named?exact={card_name}")
+        if response.status_code == 200:
+            card_data = response.json()
+            if 'image_uris' in card_data:
+                return card_data['image_uris']['normal']
+            else:
+                return card_data['card_faces'][0]['image_uris']['normal'] if 'card_faces' in card_data else ""
+        else:
+            print(f"Erro ao obter imagem da carta {card_name}")
+            return ""
+
+    def sanitize_card_name(card_name):
+        return card_name.lower().replace(' ', '-').replace(',', '').replace("'", "").strip()
+    
+    def check_combos(deck, combos):
+        sanitized_deck = {sanitize_card_name(card): card for card in deck}
+        result = []
+        for combo in combos['container']['json_dict']['cardlists']:
+            combo_cards = [(card['name'], card['sanitized']) for card in combo['cardviews']]
+            cards_in_deck = [original_name for original_name, sanitized_name in combo_cards if sanitized_name in sanitized_deck]
+            cards_not_in_deck = [original_name for original_name, sanitized_name in combo_cards if sanitized_name not in sanitized_deck]
+            result.append({
+                'combo': combo['tag'],
+                'cards': [original_name for original_name, sanitized_name in combo_cards],
+                'cards_in_deck': cards_in_deck,
+                'cards_not_in_deck': cards_not_in_deck
+            })
+        return result
+    
+    cmd_combos = edhrec.get_card_combos(commander)
+    
+    if commander not in deck_cards:
+        deck_cards.append(commander)
+    
+    combo_results = check_combos(deck_cards, cmd_combos)
+
+    G = nx.Graph()
+
+    # Adiciona nós e arestas para cada combo
+    for result in combo_results:
+        for card in result['cards']:
+            image_url = get_card_image_url(card)
+            if card in result['cards_in_deck']:
+                G.add_node(card, label=card, image=image_url, shape='image')
+            else:
+                img_base64 = load_image(image_url, 0.5)
+                G.add_node(card, label=card, image=img_base64, shape='image')
+            
+            # Adiciona informações sobre o combo
+            if 'title' in G.nodes[card]:
+                G.nodes[card]['title'] += f"<br>{result['combo']}"
+            else:
+                G.nodes[card]['title'] = result['combo']
+
+        # Adiciona arestas entre as cartas do combo
+        for i in range(len(result['cards']) - 1):
+            G.add_edge(result['cards'][i], result['cards'][i+1])
+
+    # Cria o grafo interativo com a biblioteca pyvis
+    net = Network(notebook=True, height='750px')
+    net.from_nx(G)
+    net.show('combos.html')
+
