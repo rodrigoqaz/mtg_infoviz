@@ -154,7 +154,7 @@ def vis_colors_rank(df):
                  color=color_distribution.index,
                  text=color_distribution.values,
                  labels={'x': 'CORES', 'y': 'Total'},
-                 title='<b>Predominâncias das Identidades dos Comandantes')
+                 title='<b>Predominâncias das Identidades de cores')
 
     fig.update_layout(showlegend=False)
     fig.update_yaxes(tickformat="000")
@@ -195,8 +195,8 @@ def vis_type_line(df):
     # Cria os gráficos
     fig1 = px.bar(top_subtype, x=top_subtype.index, y=top_subtype.values,
                   color=top_subtype.index, text=top_subtype.values,
-                  labels={'subtypes': 'Subtipos Mais Frequentes dos Comandantes', 'y': 'Total'},
-                  template='seaborn', title='<b>Subtipos Mais Frequentes dos  Comandantes')
+                  labels={'subtypes': 'Subtipos Mais Frequentes ', 'y': 'Total'},
+                  template='seaborn', title='<b>Subtipos Mais Frequentes')
     fig1.update_layout(showlegend=False)
     fig1.update_yaxes(tickformat="000")
 
@@ -204,7 +204,7 @@ def vis_type_line(df):
                   color='subtypes',
                   labels={'subtypes': 'Subtipos de Criaturas', 'cmc': 'CMC Médio'},
                   text='TYPE_COUNT',
-                  template='seaborn', title='<b>CMC Médio por Subtipo de Criatura Comandante')
+                  template='seaborn', title='<b>CMC Médio por Subtipo de Criatura ')
     fig2.update_layout(showlegend=False)
     fig2.update_yaxes(tickformat="000")
     fig2.update_traces(textfont_size=8)
@@ -229,7 +229,7 @@ def vis_rarity(df):
                   color=rank_rarity.index, text=rank_rarity.values,
                   labels={'rarity': 'Raridade',
                           'y': 'Total'},
-                  title='<b> Frequência de raridade dos comandantes',
+                  title='<b> Frequência de raridade ',
                   template='seaborn')
     fig1.update_layout(showlegend=False)
     fig1.update_yaxes(tickformat="000")
@@ -240,7 +240,7 @@ def vis_rarity(df):
                         'cmc': 'CMC MÉDIO'},
                   text='TYPE_COUNT',
                   template='seaborn',
-                  title='<b> CMC Médio por Raridade do Comandante')
+                  title='<b> CMC Médio por Raridade')
     fig2.update_layout(showlegend=False)
     fig2.update_yaxes(tickformat="000")
     fig2.update_traces(textfont_size=8)
