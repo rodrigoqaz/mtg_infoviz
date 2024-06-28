@@ -4,7 +4,7 @@ from src.scryfall import ScryfallHandler
 from src.visualizations import add_logo, vis_sinergy_graph, vis_word_cloud
 from src.visualizations import vis_distribuition, vis_more_expensive_cards
 from src.visualizations import vis_colors_rank, vis_type_line, vis_rarity
-from src.visualizations import vis_age, vis_combos_graph
+from src.visualizations import vis_age, vis_combos_graph, vis_cards_without_sinergy
 from src.obtain_sinergy import obtain_sinergy
 
 
@@ -145,6 +145,8 @@ with tab2:
         components.html(source_code_combos, height=760)
 
         st.header('Lista das cartas sem sinergia')
+        html_content = vis_cards_without_sinergy(sinergy['cards_without_synergy'])
+        st.markdown(html_content, unsafe_allow_html=True)
 
 with tab3:
     if st.session_state.show_analisys_page:

@@ -430,3 +430,35 @@ def vis_combos_graph(commander, deck_cards):
     net.from_nx(G)
     net.show('combos.html')
 
+def vis_cards_without_sinergy(cards_without_sinergy):
+
+    def get_card_image_url(card_name):
+        response = requests.get(f"https://api.scryfall.com/cards/named?exact={card_name}")
+        if response.status_code == 200:
+            card_data = response.json()
+            if 'image_uris' in card_data:
+                return card_data['image_uris']['small']
+            else:
+                return card_data['card_faces'][0]['image_uris']['small'] if 'card_faces' in card_data else ""
+        else:
+            print(f"Erro ao obter imagem da carta {card_name}")
+            return ""
+    cards_without_sinergy_url=[]
+
+    for card in cards_without_sinergy:
+        cards_without_sinergy_url.append({'name': card, 'image_url': get_card_image_url(card)})
+
+    html_content = '<h3>Cartas sem sinergia:</h3><div style="display: flex; flex-wrap: wrap;">'
+
+    count = 0
+    for card in cards_without_sinergy_url:
+        if count % 3 == 0 and count != 0:
+            html_content += '</div><div style="display: flex; flex-wrap: wrap;">'
+        html_content += '<div style="margin: 10px; text-align: center;">'
+        html_content += f'<img src="{card["image_url"]}" alt="{card["name"]}" style="width: 150px;"/>'
+        html_content += f'<p style="font-size: 11px;">{card["name"]}</p>'
+        html_content += '</div>'
+        count += 1
+
+    html_content += '</div>'
+    return html_content
