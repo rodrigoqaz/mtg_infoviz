@@ -460,9 +460,7 @@ def vis_cards_without_sinergy(cards_without_sinergy, commander):
     for card in filtered_deck_cards:
         cards_without_sinergy_url.append({'name': card, 'image_url': get_card_image_url(card)})
 
-    # html_content = '<h3>Cartas sem sinergia:</h3><div style="display: flex; flex-wrap: wrap;">'
     html_content = '<div style="display: flex; flex-wrap: wrap;">'
-
     
     count = 0
     for card in cards_without_sinergy_url:
@@ -476,4 +474,5 @@ def vis_cards_without_sinergy(cards_without_sinergy, commander):
     html_content += '</div>'
     
     return html_content
+
 

@@ -139,13 +139,12 @@ with tab2:
         source_code_sinergy = html_file_sinergy.read()
         components.html(source_code_sinergy, height=760)
         
-        st.header('Grafo dos combos relacionados ao OCmandante (EDHREC)')
+        st.header('Grafo dos combos relacionados ao Comandante (EDHREC)')
         html_file_combos = open("combos.html", 'r', encoding='utf-8')
         source_code_combos = html_file_combos.read()
         components.html(source_code_combos, height=760)
 
         st.header('Lista das cartas sem sinergia')
-        # html_content = vis_cards_without_sinergy(sinergy['cards_without_synergy'])
         html_content = vis_cards_without_sinergy(sinergy['cards_without_synergy'], commander)
         st.markdown(html_content, unsafe_allow_html=True)
 
