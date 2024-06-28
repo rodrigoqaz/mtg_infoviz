@@ -134,23 +134,24 @@ with tab2:
         vis_sinergy_graph(sinergy['cards_with_synergy'], commander)
         vis_combos_graph(commander, deck)
         
-        st.header('Sinergia entre o Commander e seu deck')
+        st.header('Sinergia entre o Comandante e seu deck (EDHREC)')
         html_file_sinergy = open("synergy.html", 'r', encoding='utf-8')
         source_code_sinergy = html_file_sinergy.read()
         components.html(source_code_sinergy, height=760)
         
-        st.header('Grafo dos combos')
+        st.header('Grafo dos combos relacionados ao OCmandante (EDHREC)')
         html_file_combos = open("combos.html", 'r', encoding='utf-8')
         source_code_combos = html_file_combos.read()
         components.html(source_code_combos, height=760)
 
         st.header('Lista das cartas sem sinergia')
-        html_content = vis_cards_without_sinergy(sinergy['cards_without_synergy'])
+        # html_content = vis_cards_without_sinergy(sinergy['cards_without_synergy'])
+        html_content = vis_cards_without_sinergy(sinergy['cards_without_synergy'], commander)
         st.markdown(html_content, unsafe_allow_html=True)
 
 with tab3:
     if st.session_state.show_analisys_page:
-        st.header("Nuvem de Palavras")
+        st.header("Nuvem de Palavras  (Texto e Palavras Chave dos cards no deck)")
         df_commander_cards_deck = df_commander_cards.query('name in @deck')
         input_type = st.selectbox(
             "Escolha nuvem de palavras que gostaria de exibir:",
@@ -202,12 +203,12 @@ with tab4:
         html_content = vis_more_expensive_cards(df_commander_cards_deck)
         st.markdown(html_content, unsafe_allow_html=True)
 
-        st.header('Cartas banidas')
+        # st.header('Cartas banidas')
 
         st.header('Cores')
         st.plotly_chart(vis_colors_rank(df_commander_cards_deck))
 
-        st.header('Ver se tem carta engraçada')
+        # st.header('Ver se tem carta engraçada')
 
 if st.button('Nova análise'):
     st.session_state.show_commander_selectbox = True

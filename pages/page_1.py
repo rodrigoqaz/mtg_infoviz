@@ -47,7 +47,7 @@ st.plotly_chart(fig_avg_cmc)
 
 st.plotly_chart(vis_colors_rank(df_commander_cards))
 
-st.header("Nuvem de Palavras")
+st.header("Nuvem de Palavras (Texto e Palavras Chave dos cards dos Comandantes)")
 input_type = st.selectbox("Escolha nuvem de palavras que gostaria de exibir:",
                           ['Carta Texto', 'Palavras-chave'],
                           help="""Selecione o tipo de nuvem de palavras que

@@ -55,7 +55,7 @@ def vis_commander_by_released_date(df_commander_cards):
                             y=commander_by_released_date.values,
                             mode='lines+markers',
                             name='lines+markers'))
-    fig.update_layout(title='Quantidade de Commandantes lançados por ano',
+    fig.update_layout(title='Quantidade de Comandantes lançados por ano',
                     xaxis_title='Ano',
                     yaxis_title='Quantidade')
     return fig
@@ -154,7 +154,7 @@ def vis_colors_rank(df):
                  color=color_distribution.index,
                  text=color_distribution.values,
                  labels={'x': 'CORES', 'y': 'Total'},
-                 title='<b>Predominâncias das Identidades dos Commandantes')
+                 title='<b>Predominâncias das Identidades dos Comandantes')
 
     fig.update_layout(showlegend=False)
     fig.update_yaxes(tickformat="000")
@@ -195,8 +195,8 @@ def vis_type_line(df):
     # Cria os gráficos
     fig1 = px.bar(top_subtype, x=top_subtype.index, y=top_subtype.values,
                   color=top_subtype.index, text=top_subtype.values,
-                  labels={'subtypes': 'Subtipos Mais Frequentes', 'y': 'Total'},
-                  template='seaborn', title='<b>Subtipos Mais Frequentes')
+                  labels={'subtypes': 'Subtipos Mais Frequentes dos Comandantes', 'y': 'Total'},
+                  template='seaborn', title='<b>Subtipos Mais Frequentes dos  Comandantes')
     fig1.update_layout(showlegend=False)
     fig1.update_yaxes(tickformat="000")
 
@@ -204,7 +204,7 @@ def vis_type_line(df):
                   color='subtypes',
                   labels={'subtypes': 'Subtipos de Criaturas', 'cmc': 'CMC Médio'},
                   text='TYPE_COUNT',
-                  template='seaborn', title='<b>CMC Médio por Subtipo de Criatura')
+                  template='seaborn', title='<b>CMC Médio por Subtipo de Criatura Comandante')
     fig2.update_layout(showlegend=False)
     fig2.update_yaxes(tickformat="000")
     fig2.update_traces(textfont_size=8)
@@ -229,7 +229,7 @@ def vis_rarity(df):
                   color=rank_rarity.index, text=rank_rarity.values,
                   labels={'rarity': 'Raridade',
                           'y': 'Total'},
-                  title='<b> Frequência com que cada categoria de raridade aparece',
+                  title='<b> Frequência de raridade dos comandantes',
                   template='seaborn')
     fig1.update_layout(showlegend=False)
     fig1.update_yaxes(tickformat="000")
@@ -430,7 +430,15 @@ def vis_combos_graph(commander, deck_cards):
     net.from_nx(G)
     net.show('combos.html')
 
-def vis_cards_without_sinergy(cards_without_sinergy):
+import requests
+
+def vis_cards_without_sinergy(cards_without_sinergy, commander):
+    # Lista de nomes a serem removidos
+    names_to_remove = ['Island', 'Forest', 'Plains', 'Swamp', 'Mountain']
+    
+    # Remove o comandante da lista se estiver presente
+    if commander in cards_without_sinergy:
+        cards_without_sinergy.remove(commander)
 
     def get_card_image_url(card_name):
         response = requests.get(f"https://api.scryfall.com/cards/named?exact={card_name}")
@@ -443,13 +451,19 @@ def vis_cards_without_sinergy(cards_without_sinergy):
         else:
             print(f"Erro ao obter imagem da carta {card_name}")
             return ""
-    cards_without_sinergy_url=[]
 
-    for card in cards_without_sinergy:
+    # Filtra a lista removendo as cartas indesejadas
+    filtered_deck_cards = [card for card in cards_without_sinergy if card not in names_to_remove]
+
+    cards_without_sinergy_url = []
+
+    for card in filtered_deck_cards:
         cards_without_sinergy_url.append({'name': card, 'image_url': get_card_image_url(card)})
 
-    html_content = '<h3>Cartas sem sinergia:</h3><div style="display: flex; flex-wrap: wrap;">'
+    # html_content = '<h3>Cartas sem sinergia:</h3><div style="display: flex; flex-wrap: wrap;">'
+    html_content = '<div style="display: flex; flex-wrap: wrap;">'
 
+    
     count = 0
     for card in cards_without_sinergy_url:
         if count % 3 == 0 and count != 0:
@@ -459,6 +473,7 @@ def vis_cards_without_sinergy(cards_without_sinergy):
         html_content += f'<p style="font-size: 11px;">{card["name"]}</p>'
         html_content += '</div>'
         count += 1
-
     html_content += '</div>'
+    
     return html_content
+
