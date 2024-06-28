@@ -86,7 +86,7 @@ def vis_distribuition(df):
     fig = px.histogram(df,
                        x='cmc',
                        title=('Distribuição de Custo de Mana Convertido '
-                              '(CMC) dos Comandantes'),
+                              '(CMC)'),
                        labels={'cmc': 'CMC'},
                        opacity=0.8,
                        color_discrete_sequence=['indianred'])

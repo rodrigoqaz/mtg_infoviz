@@ -9,7 +9,7 @@ def obtain_sinergy(commander, deck):
     cards_with_synergy = []
     cards_without_synergy = [] 
 
-    sections = ['New Cards', 'High Synergy Cards', 'Top Cards', 'Creatures', 'Instants', 'Sorceries', 'Utility Artifacts', 'Enchantments', 'Planeswalkers', 'Utility Lands', 'Mana Artifacts', 'Lands']
+    sections = ['New Cards', 'High Synergy Cards', 'Top Cards', 'Creatures', 'Instants', 'Sorceries', 'Utility Artifacts', 'Enchantments', 'Planeswalkers', 'Utility Lands', 'Mana Artifacts', 'Lands','Battles']
     for card in deck:
         found = False
         for section in sections:

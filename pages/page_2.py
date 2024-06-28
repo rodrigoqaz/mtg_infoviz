@@ -150,7 +150,7 @@ with tab2:
 
 with tab3:
     if st.session_state.show_analisys_page:
-        st.header("Nuvem de Palavras  (Texto e Palavras Chave dos cards no deck)")
+        st.header("Nuvem de Palavras")
         df_commander_cards_deck = df_commander_cards.query('name in @deck')
         input_type = st.selectbox(
             "Escolha nuvem de palavras que gostaria de exibir:",
